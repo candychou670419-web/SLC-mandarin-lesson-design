@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>《蚊帳大使》學習共同體公開授課教學簡報</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Microsoft JhengHei', 'PingFang TC', 'Segoe UI', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+        .slide-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            transform: scale(0.96);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem 5rem;
+            text-align: center;
+        }
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+        /* Header badge & title */
+        .badge {
+            background: linear-gradient(135deg, #0d9488, #10b981);
+            color: #ffffff;
+            padding: 0.4rem 1.2rem;
+            border-radius: 9999px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+        }
+        h1 {
+            font-size: 3.2rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+            background: linear-gradient(135deg, #ffffff, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        h2 {
+            font-size: 2.4rem;
+            color: #38bdf8;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+        p.subtitle {
+            font-size: 1.4rem;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+            max-width: 800px;
+        }
+        /* Cards & Content Grid */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 1100px;
+            margin-top: 1rem;
+        }
+        .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 1rem;
+            padding: 1.8rem;
+            text-align: left;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: #38bdf8;
+        }
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #f59e0b;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .card-text {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+        /* Question Box Highlight */
+        .question-box {
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            border: 2px solid #6366f1;
+            border-radius: 1.2rem;
+            padding: 2rem 2.5rem;
+            width: 100%;
+            max-width: 1000px;
+            text-align: left;
+            margin: 1rem 0;
+            box-shadow: 0 12px 30px rgba(99, 102, 241, 0.25);
+        }
+        .q-header {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #fbbf24;
+            margin-bottom: 1rem;
+        }
+        .q-body {
+            font-size: 1.25rem;
+            color: #f1f5f9;
+            line-height: 1.7;
+        }
+        .evidence-tag {
+            display: inline-block;
+            background: #4338ca;
+            color: #e0e7ff;
+            padding: 0.3rem 0.8rem;
+            border-radius: 0.4rem;
+            font-size: 0.95rem;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+        /* Teacher Hint Reveal Button */
+        .reveal-btn {
+            background: #0284c7;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.5rem;
+            border-radius: 0.6rem;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: background 0.2s ease;
+        }
+        .reveal-btn:hover {
+            background: #0369a1;
+        }
+        .teacher-hint {
+            display: none;
+            background: #064e3b;
+            border-left: 4px solid #10b981;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            color: #a7f3d0;
+            font-size: 1.05rem;
+            text-align: left;
+        }
+        .teacher-hint.show {
+            display: block;
+        }
+
+        /* Controls & Navigation */
+        .controls {
+            position: fixed;
+            bottom: 2rem;
+            right: 3rem;
+            display: flex;
+            gap: 1rem;
+            z-index: 100;
+        }
+        .btn-nav {
+            background: #334155;
+            color: #f8fafc;
+            border: 1px solid #475569;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            font-size: 1.3rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+        .btn-nav:hover {
+            background: #38bdf8;
+            color: #0f172a;
+            border-color: #38bdf8;
+        }
+        .slide-number {
+            position: fixed;
+            bottom: 2.3rem;
+            left: 3rem;
+            color: #64748b;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="slide-container">
+    <!-- Slide 1: Cover -->
+    <div class="slide active">
+        <span class="badge">108課綱 ‧ 學習共同體公開授課簡報</span>
+        <h1>第一課《蚊帳大使》</h1>
+        <p class="subtitle">作者：陳麗雲 ｜ 五年級國語上冊 ‧ 文本深究與高階推論</p>
+        <div class="card-grid" style="max-width: 800px;">
+            <div class="card" style="text-align: center;">
+                <div class="card-title" style="justify-content: center;">🤝 小組共學原則</div>
+                <div class="card-text">
+                    1. 發言必指讀：手指課文該行<br>
+                    2. 拒絕絕字面提取 ‧ 拒絕天馬行空<br>
+                    3. 珍視同儕發問 ‧ 共同建構理解
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 2: 30s Quiet Pulse Check -->
+    <div class="slide">
+        <span class="badge">波浪一：起點匯流與情感發酵</span>
+        <h2>靜默 30 秒體驗</h2>
+        <p class="subtitle">請大家閉上眼睛，在心中默數 1 到 30 秒……</p>
+        <div class="question-box" style="text-align: center;">
+            <div class="q-header">💡 數字背後的震撼</div>
+            <div class="q-body">
+                在 2006 年的非洲，每過這短短的 30 秒，<br>
+                就有一個孩子因為一隻小小的蚊子感染瘧疾而離開人世。<br><br>
+                <strong>五歲的凱瑟琳得知後，對媽媽說了哪一句話？</strong>
+            </div>
+            <div class="evidence-tag">課本第 11 頁：「我們需要做點什麼！」</div>
+        </div>
+    </div>
+
+    <!-- Slide 3: Entry Misconception -->
+    <div class="slide">
+        <span class="badge">起點迷思與探究聚焦</span>
+        <h2>一頂蚊帳看似微不足道？</h2>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-title">❓ 學生常見起點迷思</div>
+                <div class="card-text">
+                    「五歲小孩存幾百塊買一頂蚊帳，對全非洲那麼大的問題哪有用？根本改不了大局。」
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-title">🔍 探究的核心起點</div>
+                <div class="card-text">
+                    為甚麼課文第 11 頁寫道：這頂蚊帳是<strong>「夢想如雪球般愈滾愈大」</strong>的起點？這個雪球是靠什麼動力推動的？
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 4: 5-Stage Action Escalation -->
+    <div class="slide">
+        <span class="badge">基礎課題：行動升級脈絡</span>
+        <h2>雪球滾動的 5 階行動升級</h2>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-title">① 存點心費買蚊帳</div>
+                <div class="card-text">第 11 頁：個人行動第一步</div>
+            </div>
+            <div class="card">
+                <div class="card-title">② 義賣 ‧ 手做獎狀</div>
+                <div class="card-text">第 12 頁：將善意制度化與具體化</div>
+            </div>
+            <div class="card">
+                <div class="card-title">③ 教堂演講</div>
+                <div class="card-text">第 14 頁：帶動社區集體響應</div>
+            </div>
+            <div class="card">
+                <div class="card-title">④ 感謝貝克漢</div>
+                <div class="card-text">第 14 頁：發揮社群與名人效應</div>
+            </div>
+            <div class="card">
+                <div class="card-title">⑤ 寫信給比爾蓋茲</div>
+                <div class="card-text">第 15 頁：真誠號召，獲捐 300 萬美元</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 5: High-order Q1 -->
+    <div class="slide">
+        <span class="badge">跳躍課題 🎯 高階推論一【反差與矛盾】</span>
+        <h2>收到感謝信，為什麼沒有笑容？</h2>
+        <div class="question-box">
+            <div class="q-header">❓ 扣緊文本探究題</div>
+            <div class="q-body">
+                凱瑟琳成為年紀最小的捐贈人，收到協會感謝信時，<br>
+                課文第 12 頁第 4 行為什麼寫她<strong>「沒有露出笑容」</strong>？她當時心裡看見了什麼？
+            </div>
+            <div class="evidence-tag">請小組手指第 12 頁第 5 行尋找證據</div>
+            <button class="reveal-btn" onclick="toggleHint(this)">點擊查看教師導引與參考答案</button>
+            <div class="teacher-hint">
+                💡 <strong>解答與導引：</strong><br>
+                她讀到信中寫道：「雖然這個三十秒沒有孩子死去，可是下一個三十秒，還是有人會死。」<br>
+                她沒有停留在「救了一個人」的自我滿足，而是看見了結構性的苦難，心境躍升為對萬千孩童的責任感。
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 6: High-order Q2 -->
+    <div class="slide">
+        <span class="badge">跳躍課題 🎯 高階推論二【說服與動機】</span>
+        <h2>這封信，是乞討還是夥伴邀請？</h2>
+        <div class="question-box">
+            <div class="q-header">❓ 扣緊文本探究題</div>
+            <div class="q-body">
+                寫給比爾·蓋茲的信只有兩句話（「……可是我聽說錢都在你那裡……」），<br>
+                為什麼能打動世界首富並獲捐 300 萬美元？結合第 15 頁第 6 行<strong>「精心製作 100 張獎狀」</strong>的細節，這封信展現了什麼樣的說服力量？
+            </div>
+            <div class="evidence-tag">請小組手指第 15 頁第 6~9 行</div>
+            <button class="reveal-btn" onclick="toggleHint(this)">點擊查看教師導引與參考答案</button>
+            <div class="teacher-hint">
+                💡 <strong>解答與導引：</strong><br>
+                凱瑟琳先手做了100張獎狀，把比爾蓋茲當成已經做善事的英雄。這不是單向索取，而是一份真誠的召喚：「你有能力改變這一切，請加入我們救人的行列！」
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 7: High-order Q3 -->
+    <div class="slide">
+        <span class="badge">跳躍課題 🎯 高階推論三【弦外之音】</span>
+        <h2>解碼莎士比亞的名言隱喻</h2>
+        <div class="question-box">
+            <div class="q-header">📜 課文第 16 頁引用名言</div>
+            <div class="q-body">
+                「斧頭雖小，但經多次劈砍，終能將一棵最堅硬的橡樹砍倒。」
+            </div>
+        </div>
+        <div class="card-grid">
+            <div class="card">
+                <div class="card-title">🪓 小斧頭象徵</div>
+                <div class="card-text">孩子的微小善念、點心錢、一頂蚊帳、一張手做獎狀。</div>
+            </div>
+            <div class="card">
+                <div class="card-title">💪 多次劈砍象徵</div>
+                <div class="card-text">義賣、演講、做獎狀、寫信給名人，持續不懈的堅持行動。</div>
+            </div>
+            <div class="card">
+                <div class="card-title">🌳 堅硬的橡樹象徵</div>
+                <div class="card-text">瘧疾威脅、貧窮、社會冷漠與「不可能改變」的偏見。</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 8: Knowledge Flow & Board Layout -->
+    <div class="slide">
+        <span class="badge">波浪三：知識流動與黑板板書串聯</span>
+        <h2>板書布局與思維躍遷</h2>
+        <div class="card-grid" style="max-width: 1000px;">
+            <div class="card">
+                <div class="card-title">【起點迷思】</div>
+                <div class="card-text">五歲小孩存錢買一頂蚊帳太微弱 ➜ 沒用</div>
+            </div>
+            <div class="card">
+                <div class="card-title">【探究轉折】</div>
+                <div class="card-text">看見下一個30秒 ➜ 手做獎狀 ➜ 以夥伴之名邀請首富</div>
+            </div>
+            <div class="card">
+                <div class="card-title">【知識再構】</div>
+                <div class="card-text">只要第一步是真的，雪球就會帶動社會改變！</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Slide 9: Life Practice -->
+    <div class="slide">
+        <span class="badge">生命實踐與反思</span>
+        <h2>揮出我的「第一把小斧頭」</h2>
+        <p class="subtitle">面對生活中的大橡樹（剩食、同儕排擠、校園垃圾），你可以怎麼做？</p>
+        <div class="question-box" style="text-align: center;">
+            <div class="q-header">✍️ 寫在學習單上的行動提案</div>
+            <div class="q-body">
+                「我今天想揮出的第一把小斧頭是：______________，<br>
+                我預計帶動影響的身邊夥伴是：______________。」
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="slide-number"><span id="current-slide">1</span> / <span id="total-slides">9</span></div>
+
+<div class="controls">
+    <button class="btn-nav" onclick="prevSlide()">❮</button>
+    <button class="btn-nav" onclick="nextSlide()">❯</button>
+</div>
+
+<script>
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    document.getElementById('total-slides').textContent = totalSlides;
+
+    function showSlide(index) {
+        if (index < 0) index = 0;
+        if (index >= totalSlides) index = totalSlides - 1;
+        currentSlide = index;
+        slides.forEach((slide, i) => {
+            if (i === currentSlide) {
+                slide.classList.add('active');
+            } else {
+                slide.classList.remove('active');
+            }
+        });
+        document.getElementById('current-slide').textContent = currentSlide + 1;
+    }
+
+    function nextSlide() {
+        showSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+        showSlide(currentSlide - 1);
+    }
+
+    function toggleHint(btn) {
+        const hint = btn.nextElementSibling;
+        hint.classList.toggle('show');
+        if (hint.classList.contains('show')) {
+            btn.textContent = '隱藏解答與導引';
+        } else {
+            btn.textContent = '點擊查看教師導引與參考答案';
+        }
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+            nextSlide();
+        } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+            prevSlide();
+        }
+    });
+</script>
+</body>
+</html>
