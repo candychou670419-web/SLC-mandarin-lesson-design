@@ -1,0 +1,8 @@
+# Python & OS temporary files
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+
+# Keep output directory
+!output/
